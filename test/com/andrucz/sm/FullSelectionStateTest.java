@@ -2,32 +2,33 @@ package com.andrucz.sm;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
-public final class EmptySelectionStateTest {
+public final class FullSelectionStateTest {
 
-	private EmptySelectionState<Foo> state;
+	private FullSelectionState<Foo> state;
 	
 	@Before
 	public void initializeState() {
-		state = new EmptySelectionState<Foo>();
+		state = new FullSelectionState<Foo>();
 	}
 	
 	@Test
 	public void testIsNullSelected() {
-		assertFalse(state.isSelected(null));
+		assertTrue(state.isSelected(null));
 	}
 	
 	@Test
 	public void testIsSelected() {
 		Foo foo = new Foo(1, "andrucz");
-		assertFalse(state.isSelected(foo));
+		assertTrue(state.isSelected(foo));
 	}
 	
 	@Test
 	public void testSelectNull() {
 		SelectionState<Foo> newState = state.select(null);
-		assertTrue(newState instanceof SetSelectionState);
+		assertSame(state, newState);
 	}
 	
 	@Test
@@ -35,28 +36,28 @@ public final class EmptySelectionStateTest {
 		Foo foo = new Foo(1, "andrucz");
 		
 		SelectionState<Foo> newState = state.select(foo);
-		assertTrue(newState instanceof SetSelectionState);
-		
-		assertTrue(newState.isSelected(foo));
+		assertSame(state, newState);
 	}
 	
 	@Test
 	public void testDeselectNull() {
 		SelectionState<Foo> newState = state.deselect(null);
-		assertSame(state, newState);
+		assertTrue(newState instanceof NegateSetSelectionState);
+		assertFalse(newState.isSelected(null));
 	}
 	
 	@Test
 	public void testDeselect() {
 		Foo foo = new Foo(1, "andrucz");
 		SelectionState<Foo> newState = state.deselect(foo);
-		assertSame(state, newState);
+		assertTrue(newState instanceof NegateSetSelectionState);
+		assertFalse(newState.isSelected(foo));
 	}
 	
 	@Test
 	public void testInvert() {
 		SelectionState<Foo> newState = state.invert();
-		assertTrue(newState instanceof FullSelectionState);
+		assertTrue(newState instanceof EmptySelectionState);
 	}
 	
 }
